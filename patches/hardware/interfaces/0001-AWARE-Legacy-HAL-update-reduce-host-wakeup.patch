@@ -1,0 +1,60 @@
+From cf187495a62349b143c92ded1e2b716f00d84c8f Mon Sep 17 00:00:00 2001
+From: Etan Cohen <etancohen@google.com>
+Date: Tue, 4 Apr 2017 13:00:14 -0700
+Subject: [PATCH] [AWARE] Legacy HAL update: reduce host wakeup
+
+Legacy HAL update to add indications when a solicited publisher
+receives a match. Not used in current HAL. However, also added a
+control bit to turn off host notification which is now enabled.
+
+Bug: 35195773
+Test: integration (sl4a) tests
+(cherry picked from commit 20925b0f569c7396468a5bd406bd4c139978c7ac)
+CRs-Fixed: 2079367
+Signed-off-by: Amarnath Hullur Subramanyam <amarnath@codeaurora.org>
+Change-Id: I8ff378abaae11d4feaa42a9901abb1b48069dc4f
+---
+ wifi/1.0/default/hidl_struct_util.cpp | 1 +
+ wifi/1.0/default/wifi_legacy_hal.cpp  | 7 +++++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/wifi/1.0/default/hidl_struct_util.cpp b/wifi/1.0/default/hidl_struct_util.cpp
+index 83b2e53d..077dbb8f 100644
+--- a/wifi/1.0/default/hidl_struct_util.cpp
++++ b/wifi/1.0/default/hidl_struct_util.cpp
+@@ -1075,6 +1075,7 @@ bool convertHidlNanPublishRequestToLegacy(
+         hidl_request.baseConfigs.disableMatchExpirationIndication ? 0x2 : 0x0;
+   legacy_request->recv_indication_cfg |=
+         hidl_request.baseConfigs.disableFollowupReceivedIndication ? 0x4 : 0x0;
++  legacy_request->recv_indication_cfg |= 0x8;
+   legacy_request->cipher_type = (unsigned int) hidl_request.baseConfigs.securityConfig.cipherType;
+   if (hidl_request.baseConfigs.securityConfig.securityType == NanDataPathSecurityType::PMK) {
+     legacy_request->key_info.key_type = legacy_hal::NAN_SECURITY_KEY_INPUT_PMK;
+diff --git a/wifi/1.0/default/wifi_legacy_hal.cpp b/wifi/1.0/default/wifi_legacy_hal.cpp
+index ed1d7ece..2003daa3 100644
+--- a/wifi/1.0/default/wifi_legacy_hal.cpp
++++ b/wifi/1.0/default/wifi_legacy_hal.cpp
+@@ -181,6 +181,12 @@ void onAysncNanNotifyResponse(transaction_id id, NanResponseMsg* msg) {
+   }
+ }
+ 
++std::function<void(const NanPublishRepliedInd&)>
++    on_nan_event_publish_replied_user_callback;
++void onAysncNanEventPublishReplied(NanPublishRepliedInd* /* event */) {
++  LOG(ERROR) << "onAysncNanEventPublishReplied triggered";
++}
++
+ std::function<void(const NanPublishTerminatedInd&)>
+     on_nan_event_publish_terminated_user_callback;
+ void onAysncNanEventPublishTerminated(NanPublishTerminatedInd* event) {
+@@ -1064,6 +1070,7 @@ wifi_error WifiLegacyHal::nanRegisterCallbackHandlers(
+   return global_func_table_.wifi_nan_register_handler(
+       wlan_interface_handle_,
+       {onAysncNanNotifyResponse,
++       onAysncNanEventPublishReplied,
+        onAysncNanEventPublishTerminated,
+        onAysncNanEventMatch,
+        onAysncNanEventMatchExpired,
+-- 
+2.17.1
+

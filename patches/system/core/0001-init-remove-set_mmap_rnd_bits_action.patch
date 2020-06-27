@@ -1,0 +1,26 @@
+From b3087e5713eb1263331fff665fb4df7e13161c89 Mon Sep 17 00:00:00 2001
+From: danielhk <daniel.p6800@gmail.com>
+Date: Fri, 22 Dec 2017 23:19:21 +0800
+Subject: [PATCH] init:remove set_mmap_rnd_bits_action
+
+Kerenl doesn't support set_mmap_rnd_bits
+---
+ init/init.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/init/init.cpp b/init/init.cpp
+index 1968eb656..f97b6c835 100644
+--- a/init/init.cpp
++++ b/init/init.cpp
+@@ -1113,7 +1113,7 @@ int main(int argc, char** argv) {
+     am.QueueBuiltinAction(wait_for_coldboot_done_action, "wait_for_coldboot_done");
+     // ... so that we can start queuing up actions that require stuff from /dev.
+     am.QueueBuiltinAction(mix_hwrng_into_linux_rng_action, "mix_hwrng_into_linux_rng");
+-    am.QueueBuiltinAction(set_mmap_rnd_bits_action, "set_mmap_rnd_bits");
++    //am.QueueBuiltinAction(set_mmap_rnd_bits_action, "set_mmap_rnd_bits");
+     am.QueueBuiltinAction(set_kptr_restrict_action, "set_kptr_restrict");
+     am.QueueBuiltinAction(keychord_init_action, "keychord_init");
+     am.QueueBuiltinAction(console_init_action, "console_init");
+-- 
+2.17.1
+

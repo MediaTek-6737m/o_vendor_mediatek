@@ -1,4 +1,4 @@
-From eacabb641ecad972106d5adb099ba5368882cf05 Mon Sep 17 00:00:00 2001
+From f9414a640f11077d41db77755119d8e61785b903 Mon Sep 17 00:00:00 2001
 From: danielhk <daniel.p6800@gmail.com>
 Date: Sat, 23 Dec 2017 12:50:50 +0800
 Subject: [PATCH] libsuspend:Add earlysuspend support
@@ -7,7 +7,7 @@ Old kernels require earlysusupend support.
 ---
  libsuspend/Android.bp                 |   1 +
  libsuspend/autosuspend.c              |  13 ++
- libsuspend/autosuspend_earlysuspend.c | 218 ++++++++++++++++++++++++++++++++++
+ libsuspend/autosuspend_earlysuspend.c | 218 ++++++++++++++++++++++++++
  3 files changed, 232 insertions(+)
  create mode 100644 libsuspend/autosuspend_earlysuspend.c
 
@@ -272,5 +272,5 @@ index 000000000..579de5227
 +    return NULL;
 +}
 -- 
-2.11.0
+2.17.1
 
